@@ -213,6 +213,23 @@ async function createServer(directory: string, options: any = {}) {
             else resolve();
           });
         });
+        
+        // Add all files to git
+        await new Promise<void>((resolve, reject) => {
+          exec('git add .', { cwd: directory }, (error) => {
+            if (error) reject(error);
+            else resolve();
+          });
+        });
+        
+        // Create initial commit
+        await new Promise<void>((resolve, reject) => {
+          exec('git commit -m "initialize"', { cwd: directory }, (error) => {
+            if (error) reject(error);
+            else resolve();
+          });
+        });
+        
         spinner.succeed(chalk.green('Git repository initialized successfully!'));
       } catch (error) {
         spinner.fail(chalk.red('Failed to initialize git repository'));
