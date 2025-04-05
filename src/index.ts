@@ -207,32 +207,46 @@ async function createServer(directory: string, options: any = {}) {
       spinner.start('Initializing git repository...');
       try {
         const { exec } = await import('child_process');
-        await new Promise<void>((resolve, reject) => {
-          exec('git init', { cwd: directory }, (error) => {
-            if (error) reject(error);
-            else resolve();
+        
+        // Initialize git repository
+        try {
+          await new Promise<void>((resolve, reject) => {
+            exec('git init', { cwd: directory }, (error) => {
+              if (error) reject(error);
+              else resolve();
+            });
           });
-        });
+        } catch (error) {
+          throw new Error(`Failed to initialize git repository: ${error}`);
+        }
         
         // Add all files to git
-        await new Promise<void>((resolve, reject) => {
-          exec('git add .', { cwd: directory }, (error) => {
-            if (error) reject(error);
-            else resolve();
+        try {
+          await new Promise<void>((resolve, reject) => {
+            exec('git add .', { cwd: directory }, (error) => {
+              if (error) reject(error);
+              else resolve();
+            });
           });
-        });
+        } catch (error) {
+          throw new Error(`Failed to stage files (git add): ${error}`);
+        }
         
         // Create initial commit
-        await new Promise<void>((resolve, reject) => {
-          exec('git commit -m "initialize"', { cwd: directory }, (error) => {
-            if (error) reject(error);
-            else resolve();
+        try {
+          await new Promise<void>((resolve, reject) => {
+            exec('git commit -m "initialize"', { cwd: directory }, (error) => {
+              if (error) reject(error);
+              else resolve();
+            });
           });
-        });
+        } catch (error) {
+          throw new Error(`Failed to create initial commit: ${error}`);
+        }
         
         spinner.succeed(chalk.green('Git repository initialized successfully!'));
       } catch (error) {
-        spinner.fail(chalk.red('Failed to initialize git repository'));
+        spinner.fail(chalk.red(error instanceof Error ? error.message : 'Failed to initialize git repository'));
         console.error(error);
       }
     }
