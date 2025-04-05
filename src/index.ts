@@ -119,6 +119,18 @@ async function createServer(directory: string, options: any = {}) {
       default: true,
       when: os.platform() === "darwin" || os.platform() === "win32",
     },
+    {
+      type: "confirm",
+      name: "runNpmInstall",
+      message: "Would you like to run 'npm install'?",
+      default: true,
+    },
+    {
+      type: "confirm",
+      name: "initGit",
+      message: "Would you like to initialize a git repository?",
+      default: true,
+    },
   ];
 
   const answers = await inquirer.prompt(questions);
@@ -170,6 +182,73 @@ async function createServer(directory: string, options: any = {}) {
 
     if (answers.installForClaude) {
       await updateClaudeConfig(config.name, directory);
+    }
+
+    // Run npm install if requested
+    if (answers.runNpmInstall) {
+      spinner.start('Running npm install...');
+      try {
+        const { exec } = await import('child_process');
+        await new Promise<void>((resolve, reject) => {
+          exec('npm install', { cwd: directory }, (error) => {
+            if (error) reject(error);
+            else resolve();
+          });
+        });
+        spinner.succeed(chalk.green('npm install completed successfully!'));
+      } catch (error) {
+        spinner.fail(chalk.red('Failed to run npm install'));
+        console.error(error);
+      }
+    }
+
+    // Initialize git repository if requested
+    if (answers.initGit) {
+      spinner.start('Initializing git repository...');
+      try {
+        const { exec } = await import('child_process');
+        
+        // Initialize git repository
+        try {
+          await new Promise<void>((resolve, reject) => {
+            exec('git init', { cwd: directory }, (error) => {
+              if (error) reject(error);
+              else resolve();
+            });
+          });
+        } catch (error) {
+          throw new Error(`Failed to initialize git repository: ${error}`);
+        }
+        
+        // Add all files to git
+        try {
+          await new Promise<void>((resolve, reject) => {
+            exec('git add .', { cwd: directory }, (error) => {
+              if (error) reject(error);
+              else resolve();
+            });
+          });
+        } catch (error) {
+          throw new Error(`Failed to stage files (git add): ${error}`);
+        }
+        
+        // Create initial commit
+        try {
+          await new Promise<void>((resolve, reject) => {
+            exec('git commit -m "initialize"', { cwd: directory }, (error) => {
+              if (error) reject(error);
+              else resolve();
+            });
+          });
+        } catch (error) {
+          throw new Error(`Failed to create initial commit: ${error}`);
+        }
+        
+        spinner.succeed(chalk.green('Git repository initialized successfully!'));
+      } catch (error) {
+        spinner.fail(chalk.red(error instanceof Error ? error.message : 'Failed to initialize git repository'));
+        console.error(error);
+      }
     }
 
     // Print next steps
