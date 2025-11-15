@@ -32,9 +32,9 @@ const server = new McpServer({
 });
 
 /**
- * Define notes resource
+ * Define notes resource using the new registerResource API
  */
-server.resource(
+server.registerResource(
   "notes",
   new ResourceTemplate("note:///{id}", {
     list: async () => {
@@ -48,14 +48,18 @@ server.resource(
       };
     }
   }),
+  {
+    name: "Notes Resource",
+    description: "Access to the notes storage system"
+  },
   async (uri, params) => {
     const id = String(params.id);
     const note = notes[id];
-    
+
     if (!note) {
       throw new Error(`Note ${id} not found`);
     }
-    
+
     return {
       contents: [{
         uri: uri.toString(),
@@ -67,33 +71,41 @@ server.resource(
 );
 
 /**
- * Define create_note tool
+ * Define create_note tool using the new registerTool API
  */
-server.tool(
+server.registerTool(
   "create_note",
   {
-    title: z.string().min(1, "Title is required"),
-    content: z.string().min(1, "Content is required")
+    title: "Create Note",
+    description: "Create a new note with a title and content",
+    inputSchema: {
+      title: z.string().min(1, "Title is required").describe("The title of the note"),
+      content: z.string().min(1, "Content is required").describe("The content of the note")
+    }
   },
   async ({ title, content }: { title: string, content: string }) => {
     const id = String(Object.keys(notes).length + 1);
     notes[id] = { title, content };
-    
+
     return {
       content: [{
         type: "text",
         text: `Created note ${id}: ${title}`
-      }]
+      }],
+      isError: false
     };
   }
 );
 
 /**
- * Define summarize_notes prompt
+ * Define summarize_notes prompt using the new registerPrompt API
  */
-server.prompt(
+server.registerPrompt(
   "summarize_notes",
-  {},
+  {
+    title: "Summarize Notes",
+    description: "Generate a summary of all notes in the system"
+  },
   async () => {
     const embeddedNotes = Object.entries(notes).map(([id, note]) => ({
       type: "resource" as const,
@@ -103,7 +115,7 @@ server.prompt(
         text: note.content
       }
     }));
-    
+
     return {
       messages: [
         {
