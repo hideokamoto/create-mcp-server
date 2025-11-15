@@ -49,9 +49,9 @@ Run "npm help init" for more info
 ## Differences from the original
 
 This fork includes:
-- Updated MCP SDK to version 1.8.0
+- Updated MCP SDK to version 1.22.0
 - Added Zod for input validation
-- Simplified API usage with the latest best practices
+- Modern API usage with `registerTool`, `registerPrompt`, and `registerResource`
 - Regular maintenance and updates
 
 ## Contributing
@@ -61,6 +61,51 @@ Contributions are welcome! Please feel free to submit a Pull Request.
 ## License
 
 This project is licensed under the MIT License—see the [LICENSE](LICENSE) file for details.
+
+## Recent Updates
+
+### v1.0.0 - Breaking Changes (November 2025)
+
+This is a **major version update** with breaking changes to align with the latest MCP SDK (v1.22.0).
+
+**What's Changed:**
+
+- **SDK Update**: Upgraded from `@modelcontextprotocol/sdk ^1.8.0` to `^1.22.0`
+- **New API Methods**: Migrated to modern API methods:
+  - `server.tool()` → `server.registerTool()`
+  - `server.prompt()` → `server.registerPrompt()`
+  - `server.resource()` → `server.registerResource()`
+- **TypeScript Update**: Updated to TypeScript `^5.7.2`
+- **Node Types Update**: Updated to `@types/node ^22.10.0`
+
+**Migration Example:**
+
+```typescript
+// ❌ Old API (deprecated)
+server.tool(
+  "create_note",
+  { title: z.string(), content: z.string() },
+  async ({ title, content }) => { /* ... */ }
+);
+
+// ✅ New API (recommended)
+server.registerTool(
+  "create_note",
+  {
+    title: "Create Note",
+    description: "Create a new note with a title and content",
+    inputSchema: {
+      title: z.string().describe("The title of the note"),
+      content: z.string().describe("The content of the note")
+    }
+  },
+  async ({ title, content }) => { /* ... */ }
+);
+```
+
+**Why Breaking?**
+
+The generated project code structure is completely different from previous versions. Projects created with v1.0.0+ will use the new `register*` APIs with structured configuration objects, providing better clarity and following the latest MCP best practices.
 
 ## Acknowledgments
 
