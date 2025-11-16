@@ -1,6 +1,6 @@
 # Deployment Guide
 
-このドキュメントサイトは、Cloudflare Pagesに自動デプロイされます。
+このドキュメントサイトは、Cloudflare Workers Static Assetsを使用して自動デプロイされます。
 
 ## 自動デプロイ（推奨）
 
@@ -16,25 +16,27 @@ GitHub Actionsを使用した自動デプロイが設定されています。
 
 ### 初回セットアップ
 
-1. **Cloudflare Pages プロジェクトを作成**
-   - Cloudflareダッシュボードにアクセス
-   - Pages > Create a project
-   - プロジェクト名: `create-mcp-tools-docs`
-
-2. **Cloudflare API トークンを取得**
+1. **Cloudflare API トークンを取得**
    - Cloudflare Profile > API Tokens
-   - Create Token > Edit Cloudflare Pages を選択
+   - Create Token > "Edit Cloudflare Workers" テンプレートを選択
    - Account Resources: 該当アカウントを選択
-   - Zone Resources: All zones
+   - Zone Resources: All zones (または特定のゾーン)
    - トークンをコピー
 
-3. **GitHubシークレットを設定**
+2. **GitHubシークレットを設定**
 
    リポジトリの Settings > Secrets and variables > Actions で以下を追加:
 
    - `CLOUDFLARE_API_TOKEN`: 上記で作成したAPIトークン
    - `CLOUDFLARE_ACCOUNT_ID`: CloudflareのAccount ID
      - ダッシュボードのURLから取得: `dash.cloudflare.com/[Account ID]`
+
+3. **Worker名の設定（オプション）**
+
+   `docs/wrangler.toml` の `name` フィールドで Worker名をカスタマイズ可能:
+   ```toml
+   name = "create-mcp-tools-docs"  # 任意の名前に変更可能
+   ```
 
 4. **完了！**
 
@@ -54,13 +56,30 @@ GitHub Actionsを使用した自動デプロイが設定されています。
 cd docs
 npm install
 npm run build
-npx wrangler pages deploy dist --project-name=create-mcp-tools-docs
+npx wrangler deploy
 ```
 
 初回は認証が必要です：
 ```bash
 npx wrangler login
 ```
+
+## Cloudflare Workers Static Assetsについて
+
+このプロジェクトは、Cloudflare Workers の Static Assets 機能を使用しています。
+
+### 特徴
+
+- **高速**: Cloudflareのグローバルネットワークでコンテンツを配信
+- **スケーラブル**: 自動的にスケール、トラフィック制限なし
+- **シンプル**: Workers上で直接静的ファイルを配信
+- **カスタマイズ可能**: Workerスクリプトでリクエスト処理をカスタマイズ可能
+
+### 仕組み
+
+1. Astroで静的サイトをビルド → `dist/` ディレクトリに出力
+2. Wranglerが `dist/` 内のファイルをCloudflareにアップロード
+3. Worker (`src/index.js`) が静的アセットを配信
 
 ## データの更新
 
@@ -73,9 +92,46 @@ GitHubのリリースノートとREADMEは、ビルド時に自動的に取得�
 
 ## カスタムドメインの設定
 
-1. Cloudflare Pagesプロジェクトの設定を開く
-2. Custom domains > Set up a custom domain
-3. ドメインを入力してDNS設定を完了
+### Workers.devサブドメイン
+
+デプロイ後、自動的に `https://create-mcp-tools-docs.<your-subdomain>.workers.dev` でアクセス可能。
+
+### カスタムドメイン
+
+1. Cloudflareでドメインを管理
+2. `wrangler.toml` に routes を追加:
+   ```toml
+   routes = [
+     { pattern = "docs.example.com", custom_domain = true }
+   ]
+   ```
+3. 再デプロイ: `npx wrangler deploy`
+
+または、Cloudflare Dashboardから設定:
+1. Workers & Pages > create-mcp-tools-docs
+2. Settings > Triggers > Custom Domains
+3. "Add Custom Domain" でドメインを追加
+
+## ローカル開発
+
+### 開発サーバー
+
+```bash
+cd docs
+npm run dev
+```
+
+ブラウザで `http://localhost:4321` を開く
+
+### Wranglerでローカルプレビュー
+
+```bash
+cd docs
+npm run build
+npx wrangler dev
+```
+
+実際のWorkers環境と同じようにローカルでテスト可能。
 
 ## トラブルシューティング
 
@@ -93,6 +149,31 @@ GitHubのリリースノートとREADMEは、ビルド時に自動的に取得�
 
 ### デプロイはされるがサイトが表示されない
 
-- Cloudflare Pagesのプロジェクト名が正しいか確認
+- `wrangler.toml` の設定を確認
 - ビルド出力ディレクトリが `dist` になっているか確認
-- wrangler.tomlの設定を確認
+- Worker名が一意か確認
+- Cloudflare Dashboardでデプロイログを確認
+
+### Wranglerのデプロイエラー
+
+```
+Error: A request to the Cloudflare API failed.
+```
+
+- `CLOUDFLARE_API_TOKEN` が正しく設定されているか確認
+- トークンに必要な権限があるか確認
+- `CLOUDFLARE_ACCOUNT_ID` が正しいか確認
+
+## コスト
+
+Cloudflare Workersの無料プランでは:
+- 100,000 リクエスト/日
+- 静的アセットのストレージは無制限
+
+通常のドキュメントサイトであれば、無料プラン内で運用可能です。
+
+## 参考リンク
+
+- [Cloudflare Workers Static Assets](https://developers.cloudflare.com/workers/static-assets/)
+- [Wrangler CLI](https://developers.cloudflare.com/workers/wrangler/)
+- [Astro Documentation](https://docs.astro.build/)

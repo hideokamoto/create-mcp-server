@@ -34,27 +34,25 @@ npm run build
 
 ## デプロイ方法
 
-### Cloudflare Workersへのデプロイ
+### Cloudflare Workers Static Assetsへのデプロイ
 
-1. Cloudflare Workersアカウントを作成（まだの場合）
-
-2. Wranglerをインストール:
+1. Wranglerをインストール:
 ```bash
 npm install -g wrangler
 ```
 
-3. Cloudflareにログイン:
+2. Cloudflareにログイン:
 ```bash
 wrangler login
 ```
 
-4. `wrangler.toml`を編集して、`routes`のzone_nameを自分のドメインに変更
-
-5. ビルドしてデプロイ:
+3. ビルドしてデプロイ:
 ```bash
 npm run build
-wrangler deploy
+npx wrangler deploy
 ```
+
+詳細は `DEPLOYMENT.md` を参照してください。
 
 ## ファイル構成
 
@@ -68,6 +66,7 @@ docs/
 │   ├── layouts/         # レイアウトコンポーネント
 │   ├── components/      # 再利用可能なコンポーネント
 │   ├── data/           # GitHubから取得したデータ
+│   ├── index.js        # Cloudflare Worker エントリーポイント
 │   └── scripts/        # ビルドスクリプト
 ├── scripts/
 │   └── fetch-github-data.js  # GitHubデータ取得スクリプト
@@ -82,6 +81,19 @@ docs/
 - 英語: `/` (デフォルト)
 - 日本語: `/ja`
 
+## 技術スタック
+
+- **Astro**: 静的サイトジェネレーター
+- **Cloudflare Workers**: Static Assets機能を使用
+- **GitHub Actions**: 自動ビルド＆デプロイ
+
 ## 注意事項
 
 このディレクトリはnpmパッケージには含まれません。親ディレクトリの`.npmignore`で除外されています。
+
+## デプロイURL
+
+デプロイ後、以下のURLでアクセス可能：
+- `https://create-mcp-tools-docs.<your-subdomain>.workers.dev`
+
+カスタムドメインの設定方法は `DEPLOYMENT.md` を参照。

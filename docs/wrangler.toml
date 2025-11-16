@@ -1,7 +1,14 @@
 name = "create-mcp-tools-docs"
+main = "src/index.js"
 compatibility_date = "2024-01-01"
-pages_build_output_dir = "dist"
 
-# Note: This file is for local development with Wrangler.
-# For production, we recommend using Cloudflare Pages with GitHub Actions.
-# See .github/workflows/deploy-docs.yml for the deployment workflow.
+# Static Assets configuration
+assets = { directory = "dist", binding = "ASSETS" }
+
+# Routes configuration (optional - customize for your domain)
+# routes = [
+#   { pattern = "docs.example.com", custom_domain = true }
+# ]
+
+[observability]
+enabled = true
