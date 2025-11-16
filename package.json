@@ -17,7 +17,14 @@
   "scripts": {
     "build": "tsc && shx chmod +x build/index.js",
     "prepare": "npm run build",
-    "watch": "tsc --watch"
+    "watch": "tsc --watch",
+    "release": "np"
+  },
+  "np": {
+    "yarn": false,
+    "tests": false,
+    "cleanup": true,
+    "branch": "main"
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.22.0",
@@ -31,6 +38,7 @@
     "@types/ejs": "^3.1.5",
     "@types/inquirer": "^9.0.7",
     "@types/node": "^22.10.0",
+    "np": "^10.2.0",
     "shx": "^0.3.4",
     "typescript": "^5.7.2"
   }
