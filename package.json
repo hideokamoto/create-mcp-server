@@ -18,6 +18,7 @@
     "build": "tsc && shx chmod +x build/index.js",
     "prepare": "npm run build",
     "watch": "tsc --watch",
+    "test": "echo \"No tests specified\" && exit 0",
     "release": "np"
   },
   "np": {
