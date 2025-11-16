@@ -49,15 +49,15 @@ server.registerResource(
     }
   }),
   {
-    name: "Notes Resource",
+    title: "Notes Resource",
     description: "Access to the notes storage system"
   },
-  async (uri, params) => {
-    const id = String(params.id);
-    const note = notes[id];
+  async (uri, { id }) => {
+    const noteId = String(id);
+    const note = notes[noteId];
 
     if (!note) {
-      throw new Error(`Note ${id} not found`);
+      throw new Error(`Note ${noteId} not found`);
     }
 
     return {
