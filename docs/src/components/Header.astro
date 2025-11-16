@@ -1,0 +1,26 @@
+---
+interface Props {
+  lang: 'en' | 'ja';
+}
+
+const { lang } = Astro.props;
+const isJa = lang === 'ja';
+---
+
+<header>
+  <div class="container">
+    <div class="header-content">
+      <a href={isJa ? '/ja' : '/'} class="logo">create-mcp-tools</a>
+      <ul class="nav-links">
+        <li><a href="#getting-started">{isJa ? 'はじめる' : 'Getting Started'}</a></li>
+        <li><a href="#features">{isJa ? '機能' : 'Features'}</a></li>
+        <li><a href="#releases">{isJa ? 'リリース' : 'Releases'}</a></li>
+        <li><a href="https://github.com/hideokamoto/create-mcp-server">GitHub</a></li>
+        <li class="lang-switcher">
+          <a href="/" class={lang === 'en' ? 'active' : ''}>EN</a>
+          <a href="/ja" class={lang === 'ja' ? 'active' : ''}>JA</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</header>
