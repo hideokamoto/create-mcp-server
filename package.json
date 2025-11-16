@@ -1,6 +1,6 @@
 {
   "name": "create-mcp-tools",
-  "version": "0.5.0",
+  "version": "1.0.0",
   "description": "CLI tool to create new MCP servers",
   "license": "MIT",
   "author": "Hidetaka Okamoto",
@@ -20,7 +20,7 @@
     "watch": "tsc --watch"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.8.0",
+    "@modelcontextprotocol/sdk": "^1.22.0",
     "chalk": "^5.3.0",
     "commander": "^12.0.0",
     "ejs": "^3.1.9",
@@ -30,8 +30,8 @@
   "devDependencies": {
     "@types/ejs": "^3.1.5",
     "@types/inquirer": "^9.0.7",
-    "@types/node": "^20.11.24",
+    "@types/node": "^22.10.0",
     "shx": "^0.3.4",
-    "typescript": "^5.3.3"
+    "typescript": "^5.7.2"
   }
 }
