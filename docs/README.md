@@ -65,9 +65,7 @@ docs/
 │   │       └── index.astro  # 日本語版トップページ
 │   ├── layouts/         # レイアウトコンポーネント
 │   ├── components/      # 再利用可能なコンポーネント
-│   ├── data/           # GitHubから取得したデータ
-│   ├── index.js        # Cloudflare Worker エントリーポイント
-│   └── scripts/        # ビルドスクリプト
+│   └── data/           # GitHubから取得したデータ
 ├── scripts/
 │   └── fetch-github-data.js  # GitHubデータ取得スクリプト
 ├── astro.config.mjs    # Astro設定

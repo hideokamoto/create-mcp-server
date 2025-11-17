@@ -31,11 +31,16 @@ GitHub Actionsを使用した自動デプロイが設定されています。
    - `CLOUDFLARE_ACCOUNT_ID`: CloudflareのAccount ID
      - ダッシュボードのURLから取得: `dash.cloudflare.com/[Account ID]`
 
-3. **Worker名の設定（オプション）**
+3. **設定ファイルの確認**
 
-   `docs/wrangler.toml` の `name` フィールドで Worker名をカスタマイズ可能:
+   `docs/wrangler.toml` の内容を確認:
    ```toml
    name = "create-mcp-tools-docs"  # 任意の名前に変更可能
+   compatibility_date = "2024-01-01"
+
+   [assets]
+   directory = "dist"
+   not_found_handling = "404-page"
    ```
 
 4. **完了！**
@@ -72,14 +77,14 @@ npx wrangler login
 
 - **高速**: Cloudflareのグローバルネットワークでコンテンツを配信
 - **スケーラブル**: 自動的にスケール、トラフィック制限なし
-- **シンプル**: Workers上で直接静的ファイルを配信
-- **カスタマイズ可能**: Workerスクリプトでリクエスト処理をカスタマイズ可能
+- **シンプル**: Workerスクリプト不要で静的ファイルを直接配信
+- **無料**: 静的アセットへのリクエストは無料
 
 ### 仕組み
 
 1. Astroで静的サイトをビルド → `dist/` ディレクトリに出力
 2. Wranglerが `dist/` 内のファイルをCloudflareにアップロード
-3. Worker (`src/index.js`) が静的アセットを配信
+3. Cloudflareが静的アセットを自動的に配信（Workerスクリプト不要）
 
 ## データの更新
 
