@@ -1,0 +1,288 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../components/Header.astro';
+import githubData from '../../data/github.json';
+import sanitizeHtml from 'sanitize-html';
+
+// Safely access releases array
+const latestRelease = Array.isArray(githubData?.releases) && githubData.releases.length > 0
+  ? githubData.releases[0]
+  : null;
+
+const dateFormatOptions = {
+  year: 'numeric' as const,
+  month: 'long' as const,
+  day: 'numeric' as const
+};
+
+// Sanitize HTML helper
+const sanitize = (html: string | undefined) => {
+  if (!html) return '';
+  return sanitizeHtml(html.replace(/\n/g, '<br>'), {
+    allowedTags: ['br', 'p', 'strong', 'em', 'code', 'pre', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'a'],
+    allowedAttributes: {
+      'a': ['href', 'title', 'target']
+    }
+  });
+};
+---
+
+<Layout
+  title="create-mcp-tools - MCP Server Generator"
+  description="MCP（Model Context Protocol）サーバーを素早く構築するためのコマンドラインツール"
+  lang="ja"
+>
+  <Header lang="ja" />
+
+  <section class="hero">
+    <div class="container">
+      {latestRelease && <div class="badge">{latestRelease.tag_name}</div>}
+      <h1>create-mcp-tools</h1>
+      <p>MCP（Model Context Protocol）サーバーを素早く構築するためのコマンドラインツール</p>
+      <a href="#getting-started" class="btn">はじめる</a>
+      <a href="https://github.com/hideokamoto/create-mcp-server" class="btn btn-secondary">GitHubで見る</a>
+    </div>
+  </section>
+
+  <section id="getting-started" class="section">
+    <div class="container">
+      <h2 class="section-title">はじめる</h2>
+      <p class="section-subtitle">
+        わずか1コマンドで、新しいMCPサーバープロジェクトを作成できます
+      </p>
+
+      <div class="code-block">
+        <pre><span class="comment"># 新しいサーバーを "my-server" ディレクトリに作成</span>
+<span class="command">npm create mcp-tools my-server</span>
+
+<span class="comment"># オプションを指定して作成</span>
+<span class="command">npm create mcp-tools my-server --name "My MCP Server" --description "A custom MCP server"</span></pre>
+      </div>
+
+      <div class="step-item">
+        <div class="step-number">1</div>
+        <div class="step-content">
+          <h3>プロジェクトを作成</h3>
+          <p>上記のコマンドを実行して、新しいMCPサーバープロジェクトを作成します</p>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-number">2</div>
+        <div class="step-content">
+          <h3>依存関係をインストール</h3>
+          <div class="code-block">
+            <pre><span class="command">cd my-server</span>
+<span class="command">npm install</span></pre>
+          </div>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-number">3</div>
+        <div class="step-content">
+          <h3>ビルド & 実行</h3>
+          <div class="code-block">
+            <pre><span class="comment"># ビルド（1回のみ）</span>
+<span class="command">npm run build</span>
+
+<span class="comment"># または開発中は watch モードで</span>
+<span class="command">npm run watch</span>
+
+<span class="comment"># オプション: グローバルに利用可能にする</span>
+<span class="command">npm link</span></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="features" class="section steps">
+    <div class="container">
+      <h2 class="section-title">主な機能</h2>
+      <p class="section-subtitle">
+        オリジナルからフォークし、最新のMCP SDKと機能を追加
+      </p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🚀</div>
+          <h3>最新のMCP SDK</h3>
+          <p>MCP SDK v1.22.0を採用し、最新の機能とベストプラクティスをサポート</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">✨</div>
+          <h3>モダンなAPI</h3>
+          <p>registerTool、registerPrompt、registerResourceなど、新しいAPIメソッドを使用</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔍</div>
+          <h3>型安全性</h3>
+          <p>TypeScript 5.7.2とZodによる強力な型チェックと入力検証</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📦</div>
+          <h3>即座に使える</h3>
+          <p>必要な設定がすべて含まれており、すぐに開発を開始できます</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔄</div>
+          <h3>定期的な更新</h3>
+          <p>最新のMCP仕様とベストプラクティスに従って定期的にメンテナンス</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📝</div>
+          <h3>充実したテンプレート</h3>
+          <p>ツール、プロンプト、リソースの実装例を含むテンプレートを提供</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="migration" class="section">
+    <div class="container">
+      <h2 class="section-title">v1.0.0 - Breaking Changes</h2>
+      <p class="section-subtitle">
+        最新のMCP SDK v1.22.0に対応するための重要な変更
+      </p>
+
+      <div class="comparison">
+        <h3>APIの変更</h3>
+        <div class="comparison-grid">
+          <div class="old-api">
+            <h4>❌ 旧API（非推奨）</h4>
+            <div class="code-block">
+              <pre>server.tool(
+  "create_note",
+  &#123;
+    title: z.string(),
+    content: z.string()
+  &#125;,
+  async (&#123; title, content &#125;) => &#123;
+    // ...
+  &#125;
+);</pre>
+            </div>
+          </div>
+
+          <div class="new-api">
+            <h4>✅ 新API（推奨）</h4>
+            <div class="code-block">
+              <pre>server.registerTool(
+  "create_note",
+  &#123;
+    title: "Create Note",
+    description: "Create a new note",
+    inputSchema: &#123;
+      title: z.string()
+        .describe("The title"),
+      content: z.string()
+        .describe("The content")
+    &#125;
+  &#125;,
+  async (&#123; title, content &#125;) => &#123;
+    // ...
+  &#125;
+);</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="features-grid" style="margin-top: 40px;">
+        <div class="feature-card">
+          <h3>SDK アップデート</h3>
+          <p>@modelcontextprotocol/sdk を ^1.8.0 から ^1.22.0 にアップグレード</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>TypeScript 5.7.2</h3>
+          <p>最新のTypeScriptで、より強力な型推論とエラーチェック</p>
+        </div>
+
+        <div class="feature-card">
+          <h3>新しいAPIメソッド</h3>
+          <p>より明確で保守性の高いコード構造を実現</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="releases" class="section steps">
+    <div class="container">
+      <h2 class="section-title">リリース</h2>
+      <p class="section-subtitle">
+        最新のリリースとアップデート
+      </p>
+
+      <div class="releases-list">
+        {(Array.isArray(githubData?.releases) ? githubData.releases : []).slice(0, 5).map((release) => (
+          <div class="release-item">
+            <div class="release-header">
+              <h3 class="release-title">{release.name || release.tag_name}</h3>
+              <span class="release-date">
+                {new Date(release.published_at).toLocaleDateString('ja-JP', dateFormatOptions)}
+              </span>
+            </div>
+            <div class="release-body" set:html={sanitize(release.body)} />
+            <a href={release.html_url} class="btn" style="margin-top: 15px; display: inline-block;">GitHubで見る</a>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="container">
+      <h2 class="section-title">オリジナルとの違い</h2>
+      <p class="section-subtitle">
+        このフォークには以下の改善が含まれています
+      </p>
+
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🆕</div>
+          <h3>MCP SDK 1.22.0</h3>
+          <p>最新のSDKバージョンを採用し、新機能とパフォーマンス改善を提供</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🛡️</div>
+          <h3>Zod バリデーション</h3>
+          <p>入力値の検証に Zod を追加し、実行時の型安全性を向上</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">📚</div>
+          <h3>モダンなAPI使用法</h3>
+          <p>registerTool、registerPrompt、registerResource を使用した最新のコード</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">🔧</div>
+          <h3>定期メンテナンス</h3>
+          <p>継続的なアップデートとバグ修正を実施</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <p>
+        MIT License &copy; 2025 Hidetaka Okamoto<br>
+        <a href="https://github.com/hideokamoto/create-mcp-server">GitHub</a> |
+        <a href="https://www.npmjs.com/package/create-mcp-tools">npm</a> |
+        <a href="https://github.com/hideokamoto/create-mcp-server/issues">Issues</a>
+      </p>
+      <p style="margin-top: 20px; opacity: 0.7;">
+        オリジナルプロジェクト: <a href="https://www.npmjs.com/package/@modelcontextprotocol/create-server">@modelcontextprotocol/create-server</a>
+      </p>
+    </div>
+  </footer>
+</Layout>

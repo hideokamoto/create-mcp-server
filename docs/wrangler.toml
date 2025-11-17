@@ -1,0 +1,12 @@
+name = "create-mcp-tools-docs"
+compatibility_date = "2024-01-01"
+
+# Static Assets configuration
+# No Worker script needed - serving static assets only
+[assets]
+directory = "dist"
+# Custom 404 page handling (Astro generates 404.html)
+not_found_handling = "404-page"
+
+[observability]
+enabled = true

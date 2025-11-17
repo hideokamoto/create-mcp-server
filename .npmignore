@@ -1,0 +1,11 @@
+# Documentation site (deployed separately to Cloudflare Workers)
+docs/
+
+# Development
+*.log
+.DS_Store
+
+# Git
+.git/
+.github/
+.gitignore
