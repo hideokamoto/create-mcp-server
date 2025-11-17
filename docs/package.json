@@ -13,6 +13,7 @@
   "license": "MIT",
   "dependencies": {
     "@astrojs/node": "^9.5.0",
-    "astro": "^5.15.8"
+    "astro": "^5.15.8",
+    "sanitize-html": "^2.17.0"
   }
 }
