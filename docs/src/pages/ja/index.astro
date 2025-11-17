@@ -2,13 +2,28 @@
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../components/Header.astro';
 import githubData from '../../data/github.json';
+import sanitizeHtml from 'sanitize-html';
 
-const latestRelease = githubData.releases[0];
+// Safely access releases array
+const latestRelease = Array.isArray(githubData?.releases) && githubData.releases.length > 0
+  ? githubData.releases[0]
+  : null;
 
 const dateFormatOptions = {
   year: 'numeric' as const,
   month: 'long' as const,
   day: 'numeric' as const
+};
+
+// Sanitize HTML helper
+const sanitize = (html: string | undefined) => {
+  if (!html) return '';
+  return sanitizeHtml(html.replace(/\n/g, '<br>'), {
+    allowedTags: ['br', 'p', 'strong', 'em', 'code', 'pre', 'ul', 'ol', 'li', 'h1', 'h2', 'h3', 'h4', 'a'],
+    allowedAttributes: {
+      'a': ['href', 'title', 'target']
+    }
+  });
 };
 ---
 
@@ -206,7 +221,7 @@ const dateFormatOptions = {
       </p>
 
       <div class="releases-list">
-        {githubData.releases.slice(0, 5).map((release) => (
+        {(Array.isArray(githubData?.releases) ? githubData.releases : []).slice(0, 5).map((release) => (
           <div class="release-item">
             <div class="release-header">
               <h3 class="release-title">{release.name || release.tag_name}</h3>
@@ -214,7 +229,7 @@ const dateFormatOptions = {
                 {new Date(release.published_at).toLocaleDateString('ja-JP', dateFormatOptions)}
               </span>
             </div>
-            <div class="release-body" set:html={release.body?.replace(/\n/g, '<br>')} />
+            <div class="release-body" set:html={sanitize(release.body)} />
             <a href={release.html_url} class="btn" style="margin-top: 15px; display: inline-block;">GitHubで見る</a>
           </div>
         ))}

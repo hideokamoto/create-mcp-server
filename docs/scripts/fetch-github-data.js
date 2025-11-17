@@ -9,12 +9,17 @@ const REPO_NAME = 'create-mcp-server';
 async function fetchReleases() {
   try {
     const url = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/releases`;
-    const response = await fetch(url, {
-      headers: {
-        'Accept': 'application/vnd.github.v3+json',
-        'User-Agent': 'create-mcp-tools-docs'
-      }
-    });
+    const headers = {
+      'Accept': 'application/vnd.github.v3+json',
+      'User-Agent': 'create-mcp-tools-docs'
+    };
+
+    // Add GitHub token if available to avoid rate limiting
+    if (process.env.GITHUB_TOKEN) {
+      headers['Authorization'] = `Bearer ${process.env.GITHUB_TOKEN}`;
+    }
+
+    const response = await fetch(url, { headers });
 
     if (!response.ok) {
       console.warn('Failed to fetch releases from GitHub API, using empty array');

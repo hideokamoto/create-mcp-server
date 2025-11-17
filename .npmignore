@@ -1,14 +1,9 @@
 # Documentation site (deployed separately to Cloudflare Workers)
 docs/
 
-# Source files
-src/
-tsconfig.json
-
 # Development
 *.log
 .DS_Store
-node_modules/
 
 # Git
 .git/
