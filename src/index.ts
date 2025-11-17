@@ -97,43 +97,61 @@ async function createServer(directory: string, options: any = {}) {
     // Directory doesn't exist, we can proceed
   }
 
+  // In CI environments, skip interactive prompts and use defaults
+  const isCI = process.env.CI === 'true' || process.env.CI === '1';
+
   const questions = [
     {
       type: "input",
       name: "name",
       message: "What is the name of your MCP server?",
       default: path.basename(directory),
-      when: !options.name,
+      when: !options.name && !isCI,
     },
     {
       type: "input",
       name: "description",
       message: "What is the description of your server?",
       default: "A Model Context Protocol server",
-      when: !options.description,
+      when: !options.description && !isCI,
     },
     {
       type: "confirm",
       name: "installForClaude",
       message: "Would you like to install this server for Claude.app?",
       default: true,
-      when: os.platform() === "darwin" || os.platform() === "win32",
+      when: !isCI && (os.platform() === "darwin" || os.platform() === "win32"),
     },
     {
       type: "confirm",
       name: "runNpmInstall",
       message: "Would you like to run 'npm install'?",
       default: true,
+      when: !isCI,
     },
     {
       type: "confirm",
       name: "initGit",
       message: "Would you like to initialize a git repository?",
       default: true,
+      when: !isCI,
     },
   ];
 
   const answers = await inquirer.prompt(questions);
+
+  // In CI, use defaults for any questions that were skipped
+  if (isCI) {
+    if (!answers.name) {
+      answers.name = path.basename(directory);
+    }
+    if (!answers.description) {
+      answers.description = "A Model Context Protocol server";
+    }
+    answers.runNpmInstall = true;
+    answers.initGit = true;
+    answers.installForClaude = false; // Don't try to install for Claude in CI
+  }
 
   const config = {
     name: options.name || answers.name,
