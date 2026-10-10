@@ -3,9 +3,25 @@
   "version": "1.0.1",
   "description": "CLI tool to create new MCP servers",
   "license": "MIT",
-  "author": "Hidetaka Okamoto",
-  "homepage": "https://github.com/hideokamoto/create-typescript-server",
-  "bugs": "https://github.com/hideokamoto/create-typescript-server/issues",
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "cli",
+    "scaffolding"
+  ],
+  "author": {
+    "name": "Hidetaka Okamoto",
+    "url": "https://github.com/hideokamoto"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hideokamoto/create-mcp-server.git"
+  },
+  "homepage": "https://github.com/hideokamoto/create-mcp-server",
+  "bugs": "https://github.com/hideokamoto/create-mcp-server/issues",
+  "engines": {
+    "node": ">=18"
+  },
   "type": "module",
   "bin": {
     "create-mcp-tools": "build/index.js"
