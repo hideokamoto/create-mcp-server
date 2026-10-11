@@ -7,6 +7,7 @@
   "homepage": "https://github.com/hideokamoto/create-typescript-server",
   "bugs": "https://github.com/hideokamoto/create-typescript-server/issues",
   "type": "module",
+  "packageManager": "pnpm@11.27.1",
   "bin": {
     "create-mcp-tools": "build/index.js"
   },
@@ -14,18 +15,17 @@
     "build",
     "template"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsc && shx chmod +x build/index.js",
-    "prepare": "npm run build",
+    "prepare": "husky && npm run build",
     "watch": "tsc --watch",
     "test": "echo \"No tests specified\" && exit 0",
-    "release": "np"
-  },
-  "np": {
-    "yarn": false,
-    "tests": false,
-    "cleanup": true,
-    "branch": "main"
+    "typecheck": "tsc --noEmit",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write ."
   },
   "dependencies": {
     "@modelcontextprotocol/sdk": "^1.22.0",
@@ -36,10 +36,13 @@
     "ora": "^8.0.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "^2.5.15",
+    "@commitlint/cli": "^21.2.3",
+    "@commitlint/config-conventional": "^21.2.3",
     "@types/ejs": "^3.1.5",
     "@types/inquirer": "^9.0.7",
     "@types/node": "^22.10.0",
-    "np": "^10.2.0",
+    "husky": "^9.1.7",
     "shx": "^0.3.4",
     "typescript": "^5.7.2"
   }

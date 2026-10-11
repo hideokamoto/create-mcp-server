@@ -1,44 +1,37 @@
 #!/usr/bin/env node
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import chalk from "chalk";
 import { Command } from "commander";
 import ejs from "ejs";
-import fs from "fs/promises";
 import inquirer from "inquirer";
 import ora from "ora";
-import os from "os";
-import path from "path";
-import { fileURLToPath } from "url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 function getClaudeConfigDir(): string {
   switch (os.platform()) {
     case "darwin":
-      return path.join(
-        os.homedir(),
-        "Library",
-        "Application Support",
-        "Claude",
-      );
+      return path.join(os.homedir(), "Library", "Application Support", "Claude");
     case "win32":
       if (!process.env.APPDATA) {
         throw new Error("APPDATA environment variable is not set");
       }
       return path.join(process.env.APPDATA, "Claude");
     default:
-      throw new Error(
-        `Unsupported operating system for Claude configuration: ${os.platform()}`,
-      );
+      throw new Error(`Unsupported operating system for Claude configuration: ${os.platform()}`);
   }
 }
 
 async function updateClaudeConfig(name: string, directory: string) {
   try {
-    const configFile = path.join(
-      getClaudeConfigDir(),
-      "claude_desktop_config.json",
-    );
+    const configFile = path.join(getClaudeConfigDir(), "claude_desktop_config.json");
 
-    let config;
+    let config: {
+      mcpServers?: Record<string, unknown>;
+      [key: string]: unknown;
+    };
     try {
       config = JSON.parse(await fs.readFile(configFile, "utf-8"));
     } catch (err) {
@@ -66,9 +59,7 @@ async function updateClaudeConfig(name: string, directory: string) {
       ]);
       if (!replace) {
         console.log(
-          chalk.yellow(
-            `Skipped replacing Claude.app config for existing MCP server "${name}"`,
-          ),
+          chalk.yellow(`Skipped replacing Claude.app config for existing MCP server "${name}"`),
         );
         return;
       }
@@ -79,26 +70,27 @@ async function updateClaudeConfig(name: string, directory: string) {
     };
 
     await fs.writeFile(configFile, JSON.stringify(config, null, 2));
-    console.log(
-      chalk.green("✓ Successfully added MCP server to Claude.app configuration"),
-    );
+    console.log(chalk.green("✓ Successfully added MCP server to Claude.app configuration"));
   } catch {
     console.log(chalk.yellow("Note: Could not update Claude.app configuration"));
   }
 }
 
-async function createServer(directory: string, options: any = {}) {
+async function createServer(
+  directory: string,
+  options: { name?: string; description?: string } = {},
+) {
   // Check if directory already exists
   try {
     await fs.access(directory);
     console.log(chalk.red(`Error: Directory '${directory}' already exists.`));
     process.exit(1);
-  } catch (err) {
+  } catch {
     // Directory doesn't exist, we can proceed
   }
 
   // In CI environments, skip interactive prompts and use defaults
-  const isCI = process.env.CI === 'true' || process.env.CI === '1';
+  const isCI = process.env.CI === "true" || process.env.CI === "1";
 
   const questions = [
     {
@@ -177,9 +169,9 @@ async function createServer(directory: string, options: any = {}) {
       // Special handling for dot files - remove the leading dot from template name
       const targetPath = path.join(
         directory,
-        file.startsWith('dotfile-')
-          ? `.${file.slice(8).replace('.ejs', '')}`
-          : file.replace('.ejs', '')
+        file.startsWith("dotfile-")
+          ? `.${file.slice(8).replace(".ejs", "")}`
+          : file.replace(".ejs", ""),
       );
       const targetDir = path.dirname(targetPath);
 
@@ -204,32 +196,32 @@ async function createServer(directory: string, options: any = {}) {
 
     // Run npm install if requested
     if (answers.runNpmInstall) {
-      spinner.start('Running npm install...');
+      spinner.start("Running npm install...");
       try {
-        const { exec } = await import('child_process');
+        const { exec } = await import("node:child_process");
         await new Promise<void>((resolve, reject) => {
-          exec('npm install', { cwd: directory }, (error) => {
+          exec("npm install", { cwd: directory }, (error) => {
             if (error) reject(error);
             else resolve();
           });
         });
-        spinner.succeed(chalk.green('npm install completed successfully!'));
+        spinner.succeed(chalk.green("npm install completed successfully!"));
       } catch (error) {
-        spinner.fail(chalk.red('Failed to run npm install'));
+        spinner.fail(chalk.red("Failed to run npm install"));
         console.error(error);
       }
     }
 
     // Initialize git repository if requested
     if (answers.initGit) {
-      spinner.start('Initializing git repository...');
+      spinner.start("Initializing git repository...");
       try {
-        const { exec } = await import('child_process');
-        
+        const { exec } = await import("node:child_process");
+
         // Initialize git repository
         try {
           await new Promise<void>((resolve, reject) => {
-            exec('git init', { cwd: directory }, (error) => {
+            exec("git init", { cwd: directory }, (error) => {
               if (error) reject(error);
               else resolve();
             });
@@ -237,11 +229,11 @@ async function createServer(directory: string, options: any = {}) {
         } catch (error) {
           throw new Error(`Failed to initialize git repository: ${error}`);
         }
-        
+
         // Add all files to git
         try {
           await new Promise<void>((resolve, reject) => {
-            exec('git add .', { cwd: directory }, (error) => {
+            exec("git add .", { cwd: directory }, (error) => {
               if (error) reject(error);
               else resolve();
             });
@@ -249,7 +241,7 @@ async function createServer(directory: string, options: any = {}) {
         } catch (error) {
           throw new Error(`Failed to stage files (git add): ${error}`);
         }
-        
+
         // Create initial commit
         try {
           await new Promise<void>((resolve, reject) => {
@@ -261,10 +253,12 @@ async function createServer(directory: string, options: any = {}) {
         } catch (error) {
           throw new Error(`Failed to create initial commit: ${error}`);
         }
-        
-        spinner.succeed(chalk.green('Git repository initialized successfully!'));
+
+        spinner.succeed(chalk.green("Git repository initialized successfully!"));
       } catch (error) {
-        spinner.fail(chalk.red(error instanceof Error ? error.message : 'Failed to initialize git repository'));
+        spinner.fail(
+          chalk.red(error instanceof Error ? error.message : "Failed to initialize git repository"),
+        );
         console.error(error);
       }
     }
@@ -273,13 +267,9 @@ async function createServer(directory: string, options: any = {}) {
     console.log("\nNext steps:");
     console.log(chalk.cyan(`  cd ${directory}`));
     console.log(chalk.cyan("  npm install"));
+    console.log(chalk.cyan(`  npm run build  ${chalk.reset("# or: npm run watch")}`));
     console.log(
-      chalk.cyan(`  npm run build  ${chalk.reset("# or: npm run watch")}`),
-    );
-    console.log(
-      chalk.cyan(
-        `  npm link       ${chalk.reset("# optional, to make available globally")}\n`,
-      ),
+      chalk.cyan(`  npm link       ${chalk.reset("# optional, to make available globally")}\n`),
     );
   } catch (error) {
     spinner.fail(chalk.red("Failed to create MCP server"));
