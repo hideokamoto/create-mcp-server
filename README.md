@@ -2,6 +2,11 @@
 
 A command line tool for quickly scaffolding new MCP (Model Context Protocol) servers. This is a public fork of [@modelcontextprotocol/create-server](https://www.npmjs.com/package/@modelcontextprotocol/create-server), maintained with the latest SDK updates and improvements.
 
+## Requirements
+
+- Node.js `^18.17.0 || >=20.1.0`. The CLI copies the template with `fs.readdir(..., { recursive: true })`, which was added in Node.js v18.17.0 and v20.1.0; older versions would silently skip `src/index.ts`, so the CLI refuses to run on them.
+- `npm` (used to install the generated project's dependencies) and `git` (used to create the initial commit), unless you decline those steps.
+
 ## Getting Started
 
 ```bash

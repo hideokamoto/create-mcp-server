@@ -8,6 +8,7 @@ import { Command } from "commander";
 import ejs from "ejs";
 import inquirer from "inquirer";
 import ora from "ora";
+import { isSupportedNodeVersion, NODE_ENGINES_RANGE } from "./node-version.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 function getClaudeConfigDir(): string {
@@ -276,6 +277,15 @@ async function createServer(
     console.error(error);
     process.exit(1);
   }
+}
+
+if (!isSupportedNodeVersion(process.versions.node)) {
+  console.error(
+    chalk.red(
+      `Error: create-mcp-tools requires Node.js ${NODE_ENGINES_RANGE} (current: ${process.version}).`,
+    ),
+  );
+  process.exit(1);
 }
 
 const program = new Command()

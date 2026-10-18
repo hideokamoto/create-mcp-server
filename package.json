@@ -20,7 +20,7 @@
   "homepage": "https://github.com/hideokamoto/create-mcp-server",
   "bugs": "https://github.com/hideokamoto/create-mcp-server/issues",
   "engines": {
-    "node": ">=18"
+    "node": "^18.17.0 || >=20.1.0"
   },
   "type": "module",
   "packageManager": "pnpm@11.27.1",
