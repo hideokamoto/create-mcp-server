@@ -146,6 +146,22 @@ const sanitize = (html: string | undefined) => {
     </div>
   </section>
 
+  <section id="agent-skill" class="section">
+    <div class="container">
+      <h2 class="section-title">Agent Skill</h2>
+      <p class="section-subtitle">
+        コーディングエージェント（Claude Code など）が create-mcp-tools を安全に使えるようにするスキルです。前提条件を確認し、実行前に計画を示して承認を得てから CI=1 で実行し、結果を検証します。
+      </p>
+
+      <div class="code-block">
+        <pre><span class="comment"># エージェントにスキルをインストール</span>
+<span class="command">npx skills add hideokamoto/create-mcp-server</span></pre>
+      </div>
+
+      <p class="section-subtitle"><a href="/.well-known/agent-skills/index.json">/.well-known/agent-skills/index.json</a>、<a href="/skill.md">/skill.md</a>、<a href="/llms.txt">/llms.txt</a> からも取得できます。</p>
+    </div>
+  </section>
+
   <section id="migration" class="section">
     <div class="container">
       <h2 class="section-title">v1.0.0 - Breaking Changes</h2>

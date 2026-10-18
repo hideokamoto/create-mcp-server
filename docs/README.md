@@ -74,6 +74,16 @@ docs/
 
 ```
 
+## LLM・エージェント向けの配信
+
+ビルド時に次のファイルを生成します（`src/pages/` のエンドポイント）。
+
+- `/llms.txt` — [llms.txt](https://llmstxt.org/) 形式の案内。全ページの `<head>` に `<link rel="describedby" href="/llms.txt">` を入れています
+- `/skill.md` と `/.well-known/agent-skills/<name>/SKILL.md` — リポジトリ直下の `skills/<name>/SKILL.md` をビルド時に読み込み、そのままのバイト列で配信します（docs 側にコピーは持ちません）
+- `/.well-known/agent-skills/index.json` — [Agent Skills Discovery RFC](https://github.com/cloudflare/agent-skills-discovery-rfc) v0.2.0 形式の一覧。`digest` は SKILL.md の生バイトの SHA-256 です
+
+スキルは `npx skills add hideokamoto/create-mcp-server` でもインストールできます。CLI の挙動を変えたら `skills/` も同じ PR で更新してください（`../AGENTS.md` 参照）。
+
 ## 多言語対応
 
 - 英語: `/` (デフォルト)
