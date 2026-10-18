@@ -279,6 +279,40 @@ async function createServer(
   }
 }
 
+const HELP_TEXT_AFTER = `
+Interactive prompts (skipped when CI=true or CI=1):
+  - Server name, only when --name is not given (default: basename of <directory>)
+  - Description, only when --description is not given
+    (default: "A Model Context Protocol server")
+  - Install for Claude.app, macOS and Windows only: adds
+    { "command": "node", "args": ["<absolute path>/build/index.js"] } under
+    "mcpServers.<name>" in claude_desktop_config.json, asking before replacing
+    an existing entry with the same name
+  - Run "npm install" in the new directory
+  - Initialize a git repository (git init, git add ., git commit -m "initialize")
+
+When CI=true or CI=1:
+  No prompts. Missing name/description fall back to the defaults above,
+  "npm install" and git initialization always run, and Claude.app config is
+  never touched.
+
+Notes:
+  - The server name is used as the package.json "name" and "bin" key, the
+    McpServer name in src/index.ts, and the Claude.app config key.
+  - Exits with code 1 if <directory> already exists or the files cannot be
+    created. Failures of "npm install", git initialization or the Claude.app
+    config update are reported but do not change the exit code.
+  - Requires Node.js ${NODE_ENGINES_RANGE}.
+
+Examples:
+  $ npx create-mcp-tools my-server
+  $ npx create-mcp-tools my-server --name my-server --description "My MCP server"
+  $ npm create mcp-tools@latest my-server -- --name my-server
+
+  With "npm create" / "npm init", put options after "--"; otherwise npm does
+  not forward them to this command.
+`;
+
 if (!isSupportedNodeVersion(process.versions.node)) {
   console.error(
     chalk.red(
@@ -289,11 +323,18 @@ if (!isSupportedNodeVersion(process.versions.node)) {
 }
 
 const program = new Command()
-  .name("create-mcp-server")
-  .description("Create a new MCP server")
-  .argument("<directory>", "Directory to create the server in")
-  .option("-n, --name <name>", "Name of the server")
-  .option("-d, --description <description>", "Description of the server")
+  .name("create-mcp-tools")
+  .description("Scaffold a new TypeScript MCP (Model Context Protocol) server project")
+  .argument("<directory>", "directory to create (must not exist yet)")
+  .option(
+    "-n, --name <name>",
+    "server name (default: basename of <directory>; skips the name prompt)",
+  )
+  .option(
+    "-d, --description <description>",
+    'server description (default: "A Model Context Protocol server"; skips the description prompt)',
+  )
+  .addHelpText("after", HELP_TEXT_AFTER)
   .action(createServer);
 
 program.parse();

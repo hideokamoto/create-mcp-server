@@ -55,9 +55,11 @@ const sanitize = (html: string | undefined) => {
         <pre><span class="comment"># 新しいサーバーを "my-server" ディレクトリに作成</span>
 <span class="command">npm create mcp-tools my-server</span>
 
-<span class="comment"># オプションを指定して作成</span>
-<span class="command">npm create mcp-tools my-server --name "My MCP Server" --description "A custom MCP server"</span></pre>
+<span class="comment"># オプションを指定して作成（npm は "--" より後ろのオプションだけを CLI に渡します）</span>
+<span class="command">npm create mcp-tools my-server -- --name my-server --description "A custom MCP server"</span></pre>
       </div>
+
+      <p class="section-subtitle">Node.js ^18.17.0 || &gt;=20.1.0 が必要です。すべてのオプションは <code>npx create-mcp-tools --help</code> で確認できます。</p>
 
       <div class="step-item">
         <div class="step-number">1</div>
