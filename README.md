@@ -87,6 +87,16 @@ Examples:
   not forward them to this command.
 ```
 
+## Agent Skill
+
+This repository ships an [Agent Skill](https://agentskills.io/specification) that teaches coding agents (Claude Code, etc.) how to run this CLI safely: prerequisites, a dry-run plan that the user approves before anything is created, `CI=1` for non-interactive runs, and how to verify the result.
+
+```bash
+npx skills add hideokamoto/create-mcp-server
+```
+
+The skill lives in [`skills/create-mcp-tools/SKILL.md`](skills/create-mcp-tools/SKILL.md) and is not part of the npm package. When you change the CLI, update the skill in the same pull request (see [AGENTS.md](AGENTS.md)).
+
 ## Differences from the original
 
 This fork includes:
