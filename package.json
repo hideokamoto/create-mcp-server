@@ -38,7 +38,7 @@
     "build": "tsc && shx chmod +x build/index.js",
     "prepare": "husky && npm run build",
     "watch": "tsc --watch",
-    "test": "echo \"No tests specified\" && exit 0",
+    "test": "npm run build && node --test test/*.test.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
     "lint:fix": "biome check --write ."
