@@ -51,15 +51,16 @@ These values come from the user and are put on a shell command line, so quote th
 - Prefer to reject rather than escape for `directory` and `--name`: ask for another value
   unless it matches `^[A-Za-z0-9._@/-]+$` and does not start with `-`. Those two have no
   legitimate need for spaces or shell syntax.
-- Keep `--` before the directory in `test` commands (`test -e -- '<directory>'`) so that a value
-  is never read as an option.
+- Do not put `--` after `test`: bash's `test -e -- x` fails with "binary operator expected"
+  (exit code 2), which reads as "does not exist". The `-`-prefix rule above is what keeps a
+  value from being read as an option. `dirname -- '<directory>'` does accept `--`.
 
 ### 2. Dry run: show the plan and get approval
 
 The CLI has no dry-run flag. Do the read-only checks yourself and present the plan instead:
 
-1. Confirm the prerequisites above, that `directory` does not exist (`test -e -- '<directory>'`) and
-   that its parent does (`test -d -- "$(dirname -- '<directory>')"`).
+1. Confirm the prerequisites above, that `directory` does not exist (`test -e '<directory>'`) and
+   that its parent does (`test -d "$(dirname -- '<directory>')"`).
 2. Optionally show the CLI's own help, which describes the current behavior:
    `npx -y create-mcp-tools@latest --help` (this only downloads the CLI into the npm cache).
 3. Tell the user exactly what the real run will do:
