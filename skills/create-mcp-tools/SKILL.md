@@ -43,12 +43,23 @@ Check these before proposing a run. Each one maps to a concrete failure:
   package.json `name` rules). The CLI does not validate it.
 - `--description`: defaults to `"A Model Context Protocol server"`.
 
+These values come from the user and are put on a shell command line, so quote them as data:
+
+- Write every value as a single-quoted shell word (`'my-server'`). Inside single quotes nothing
+  is expanded; a literal `'` in a value is written as `'\''`. Double quotes are not enough:
+  `$(...)` and backticks still run inside them.
+- Prefer to reject rather than escape for `directory` and `--name`: ask for another value
+  unless it matches `^[A-Za-z0-9._@/-]+$` and does not start with `-`. Those two have no
+  legitimate need for spaces or shell syntax.
+- Keep `--` before the directory in `test` commands (`test -e -- '<directory>'`) so that a value
+  is never read as an option.
+
 ### 2. Dry run: show the plan and get approval
 
 The CLI has no dry-run flag. Do the read-only checks yourself and present the plan instead:
 
-1. Confirm the prerequisites above, that `directory` does not exist (`test -e <directory>`) and
-   that its parent does (`test -d "$(dirname <directory>)"`).
+1. Confirm the prerequisites above, that `directory` does not exist (`test -e -- '<directory>'`) and
+   that its parent does (`test -d -- "$(dirname -- '<directory>')"`).
 2. Optionally show the CLI's own help, which describes the current behavior:
    `npx -y create-mcp-tools@latest --help` (this only downloads the CLI into the npm cache).
 3. Tell the user exactly what the real run will do:
@@ -63,8 +74,10 @@ The CLI has no dry-run flag. Do the read-only checks yourself and present the pl
 ### 3. Run
 
 ```bash
-CI=1 npx -y create-mcp-tools@latest <directory> --name <name> --description "<description>"
+CI=1 npx -y create-mcp-tools@latest '<directory>' --name '<name>' --description '<description>'
 ```
+
+`<directory>`, `<name>` and `<description>` stand for the single-quoted values from step 1.
 
 - `CI=1` (or `CI=true`) is required when an agent runs the CLI. Without a TTY, the interactive
   prompts cannot be answered and the process aborts (exit code 130) before creating anything.
@@ -73,7 +86,7 @@ CI=1 npx -y create-mcp-tools@latest <directory> --name <name> --description "<de
 - `-y` stops npx from asking before it installs the CLI. npm also assumes `--yes` when stdin is
   not a TTY or a CI environment is detected.
 - With `npm create mcp-tools` instead of `npx`, put the CLI's options after `--`
-  (`npm create mcp-tools@latest <directory> -- --name <name>`). Without `--`, npm does not
+  (`npm create mcp-tools@latest '<directory>' -- --name '<name>'`). Without `--`, npm does not
   forward `--name` / `--description` and the defaults are used silently.
 
 ### 4. Verify
