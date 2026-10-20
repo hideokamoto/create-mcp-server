@@ -10,13 +10,13 @@ Astroで構築され、GitHubのリリースノートとREADMEを動的に取得
 
 ```bash
 cd docs
-npm install
+pnpm install
 ```
 
 ### 開発サーバーの起動
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 ブラウザで `http://localhost:4321` を開くとサイトをプレビューできます。
@@ -24,7 +24,7 @@ npm run dev
 ### ビルド
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 このコマンドは以下を実行します：
@@ -38,7 +38,7 @@ npm run build
 
 1. Wranglerをインストール:
 ```bash
-npm install -g wrangler
+pnpm add -g wrangler
 ```
 
 2. Cloudflareにログイン:
@@ -48,7 +48,7 @@ wrangler login
 
 3. ビルドしてデプロイ:
 ```bash
-npm run build
+pnpm run build
 npx wrangler deploy
 ```
 

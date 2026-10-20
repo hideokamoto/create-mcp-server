@@ -20,7 +20,7 @@ pnpm install
 pnpm run lint
 pnpm run typecheck
 pnpm test          # builds, then runs test/*.test.mjs
-cd docs && npm ci && npm run build
+cd docs && pnpm install --frozen-lockfile && pnpm run build
 ```
 
 ## Commits and releases
