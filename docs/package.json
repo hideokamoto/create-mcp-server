@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Documentation site for create-mcp-tools",
   "type": "module",
+  "packageManager": "npm@10.9.2",
   "scripts": {
     "dev": "astro dev",
     "build": "node scripts/fetch-github-data.js && astro build",
