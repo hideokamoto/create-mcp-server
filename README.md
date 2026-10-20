@@ -2,14 +2,22 @@
 
 A command line tool for quickly scaffolding new MCP (Model Context Protocol) servers. This is a public fork of [@modelcontextprotocol/create-server](https://www.npmjs.com/package/@modelcontextprotocol/create-server), maintained with the latest SDK updates and improvements.
 
+## Requirements
+
+- Node.js `^18.17.0 || >=20.1.0`. The CLI copies the template with `fs.readdir(..., { recursive: true })`, which was added in Node.js v18.17.0 and v20.1.0; older versions would silently skip `src/index.ts`, so the CLI refuses to run on them.
+- `npm` (used to install the generated project's dependencies) and `git` (used to create the initial commit), unless you decline those steps.
+
 ## Getting Started
 
 ```bash
 # Create a new server in the directory `my-server`
 npm create mcp-tools my-server
 
-# With options
-npm create mcp-tools my-server --name "My MCP Server" --description "A custom MCP server"
+# With options (npm only forwards options that come after `--`)
+npm create mcp-tools my-server -- --name my-server --description "A custom MCP server"
+
+# Or run the CLI directly
+npx create-mcp-tools my-server --name my-server --description "A custom MCP server"
 ```
 
 After creating your server:
@@ -26,25 +34,68 @@ npm run watch    # Start TypeScript compiler in watch mode
 npm link         # Make your server binary globally available
 ```
 
-```bash
-% npm create mcp-tools --help
-Create a package.json file
+### CLI reference
 
-Usage:
-npm init <package-spec> (same as `npx <package-spec>`)
-npm init <@scope> (same as `npx <@scope>/create`)
+`npm create mcp-tools --help` prints npm's own help for `npm init`. To see this CLI's help, run `npx create-mcp-tools --help` or `npm create mcp-tools -- --help`:
+
+```text
+Usage: create-mcp-tools [options] <directory>
+
+Scaffold a new TypeScript MCP (Model Context Protocol) server project
+
+Arguments:
+  directory                        directory to create (must not exist yet)
 
 Options:
-[--init-author-name <name>] [--init-author-url <url>] [--init-license <license>]
-[--init-module <module>] [--init-version <version>] [-y|--yes] [-f|--force]
-[--scope <@scope>]
-[-w|--workspace <workspace-name> [-w|--workspace <workspace-name> ...]]
-[-ws|--workspaces] [--no-workspaces-update] [--include-workspace-root]
+  -n, --name <name>                server name (default: basename of
+                                   <directory>; skips the name prompt)
+  -d, --description <description>  server description (default: "A Model
+                                   Context Protocol server"; skips the
+                                   description prompt)
+  -h, --help                       display help for command
 
-aliases: create, innit
+Interactive prompts (skipped when CI=true or CI=1):
+  - Server name, only when --name is not given (default: basename of <directory>)
+  - Description, only when --description is not given
+    (default: "A Model Context Protocol server")
+  - Install for Claude.app, macOS and Windows only: adds
+    { "command": "node", "args": ["<absolute path>/build/index.js"] } under
+    "mcpServers.<name>" in claude_desktop_config.json, asking before replacing
+    an existing entry with the same name
+  - Run "npm install" in the new directory
+  - Initialize a git repository (git init, git add ., git commit -m "initialize")
 
-Run "npm help init" for more info
+When CI=true or CI=1:
+  No prompts. Missing name/description fall back to the defaults above,
+  "npm install" and git initialization always run, and Claude.app config is
+  never touched.
+
+Notes:
+  - The server name is used as the package.json "name" and "bin" key, the
+    McpServer name in src/index.ts, and the Claude.app config key.
+  - Exits with code 1 if <directory> already exists or the files cannot be
+    created. Failures of "npm install", git initialization or the Claude.app
+    config update are reported but do not change the exit code.
+  - Requires Node.js ^18.17.0 || >=20.1.0.
+
+Examples:
+  $ npx create-mcp-tools my-server
+  $ npx create-mcp-tools my-server --name my-server --description "My MCP server"
+  $ npm create mcp-tools@latest my-server -- --name my-server
+
+  With "npm create" / "npm init", put options after "--"; otherwise npm does
+  not forward them to this command.
 ```
+
+## Agent Skill
+
+This repository ships an [Agent Skill](https://agentskills.io/specification) that teaches coding agents (Claude Code, etc.) how to run this CLI safely: prerequisites, a dry-run plan that the user approves before anything is created, `CI=1` for non-interactive runs, and how to verify the result.
+
+```bash
+npx skills add hideokamoto/create-mcp-server
+```
+
+The skill lives in [`skills/create-mcp-tools/SKILL.md`](skills/create-mcp-tools/SKILL.md) and is not part of the npm package. When you change the CLI, update the skill in the same pull request (see [AGENTS.md](AGENTS.md)).
 
 ## Differences from the original
 

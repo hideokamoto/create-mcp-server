@@ -55,9 +55,11 @@ const sanitize = (html: string | undefined) => {
         <pre><span class="comment"># Create a new server in the "my-server" directory</span>
 <span class="command">npm create mcp-tools my-server</span>
 
-<span class="comment"># With options</span>
-<span class="command">npm create mcp-tools my-server --name "My MCP Server" --description "A custom MCP server"</span></pre>
+<span class="comment"># With options (npm only forwards options after "--")</span>
+<span class="command">npm create mcp-tools my-server -- --name my-server --description "A custom MCP server"</span></pre>
       </div>
+
+      <p class="section-subtitle">Requires Node.js ^18.17.0 || &gt;=20.1.0. Run <code>npx create-mcp-tools --help</code> to see all options.</p>
 
       <div class="step-item">
         <div class="step-number">1</div>
@@ -141,6 +143,22 @@ const sanitize = (html: string | undefined) => {
           <p>Provides templates with implementation examples for tools, prompts, and resources</p>
         </div>
       </div>
+    </div>
+  </section>
+
+  <section id="agent-skill" class="section">
+    <div class="container">
+      <h2 class="section-title">Agent Skill</h2>
+      <p class="section-subtitle">
+        Teach your coding agent (Claude Code, etc.) to run create-mcp-tools safely: it checks prerequisites, shows a plan for your approval, runs with CI=1 and verifies the result.
+      </p>
+
+      <div class="code-block">
+        <pre><span class="comment"># Install the skill into your agent</span>
+<span class="command">npx skills add hideokamoto/create-mcp-server</span></pre>
+      </div>
+
+      <p class="section-subtitle">Also available at <a href="/.well-known/agent-skills/index.json">/.well-known/agent-skills/index.json</a>, <a href="/skill.md">/skill.md</a> and <a href="/llms.txt">/llms.txt</a>.</p>
     </div>
   </section>
 

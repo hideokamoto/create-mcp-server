@@ -10,13 +10,13 @@ Astroで構築され、GitHubのリリースノートとREADMEを動的に取得
 
 ```bash
 cd docs
-npm install
+pnpm install
 ```
 
 ### 開発サーバーの起動
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 ブラウザで `http://localhost:4321` を開くとサイトをプレビューできます。
@@ -24,7 +24,7 @@ npm run dev
 ### ビルド
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 このコマンドは以下を実行します：
@@ -38,7 +38,7 @@ npm run build
 
 1. Wranglerをインストール:
 ```bash
-npm install -g wrangler
+pnpm add -g wrangler
 ```
 
 2. Cloudflareにログイン:
@@ -48,7 +48,7 @@ wrangler login
 
 3. ビルドしてデプロイ:
 ```bash
-npm run build
+pnpm run build
 npx wrangler deploy
 ```
 
@@ -73,6 +73,16 @@ docs/
 └── package.json
 
 ```
+
+## LLM・エージェント向けの配信
+
+ビルド時に次のファイルを生成します（`src/pages/` のエンドポイント）。
+
+- `/llms.txt` — [llms.txt](https://llmstxt.org/) 形式の案内。全ページの `<head>` に `<link rel="describedby" href="/llms.txt">` を入れています
+- `/skill.md` と `/.well-known/agent-skills/<name>/SKILL.md` — リポジトリ直下の `skills/<name>/SKILL.md` をビルド時に読み込み、そのままのバイト列で配信します（docs 側にコピーは持ちません）
+- `/.well-known/agent-skills/index.json` — [Agent Skills Discovery RFC](https://github.com/cloudflare/agent-skills-discovery-rfc) v0.2.0 形式の一覧。`digest` は SKILL.md の生バイトの SHA-256 です
+
+スキルは `npx skills add hideokamoto/create-mcp-server` でもインストールできます。CLI の挙動を変えたら `skills/` も同じ PR で更新してください（`../AGENTS.md` 参照）。
 
 ## 多言語対応
 

@@ -20,7 +20,7 @@
   "homepage": "https://github.com/hideokamoto/create-mcp-server",
   "bugs": "https://github.com/hideokamoto/create-mcp-server/issues",
   "engines": {
-    "node": ">=18"
+    "node": "^18.17.0 || >=20.1.0"
   },
   "type": "module",
   "packageManager": "pnpm@11.27.1",
@@ -38,7 +38,7 @@
     "build": "tsc && shx chmod +x build/index.js",
     "prepare": "husky && npm run build",
     "watch": "tsc --watch",
-    "test": "echo \"No tests specified\" && exit 0",
+    "test": "npm run build && node --test test/*.test.mjs",
     "typecheck": "tsc --noEmit",
     "lint": "biome check .",
     "lint:fix": "biome check --write ."

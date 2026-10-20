@@ -59,8 +59,8 @@ GitHub Actionsを使用した自動デプロイが設定されています。
 
 ```bash
 cd docs
-npm install
-npm run build
+pnpm install
+pnpm run build
 npx wrangler deploy
 ```
 
@@ -136,7 +136,7 @@ GitHubのリリースノートとREADMEは、ビルド時に自動的に取得�
 
 ```bash
 cd docs
-npm run dev
+pnpm run dev
 ```
 
 ブラウザで `http://localhost:4321` を開く
@@ -145,7 +145,7 @@ npm run dev
 
 ```bash
 cd docs
-npm run build
+pnpm run build
 npx wrangler dev
 ```
 
@@ -155,8 +155,8 @@ npx wrangler dev
 
 ### ビルドが失敗する
 
-- Node.jsのバージョンを確認（20以上を推奨）
-- `docs/package-lock.json` が最新か確認
+- Node.jsのバージョンを確認（pnpm 11 は 22.13 以上が必要）
+- `docs/pnpm-lock.yaml` が最新か確認（`pnpm install --frozen-lockfile` が通るか）
 - GitHub Actionsのログを確認
 
 ### GitHubデータが取得できない

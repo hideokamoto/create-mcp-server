@@ -1,0 +1,5 @@
+# pnpm 11 fails the install on dependency build scripts that are not listed here
+# (strictDepBuilds). npm ran these scripts before docs/ moved to pnpm.
+allowBuilds:
+  esbuild: true
+  sharp: true
